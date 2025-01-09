@@ -29,21 +29,32 @@ def solve_1d_diffusion(concentration, grid_spacing=1.0, time_step=1.0, diffusivi
     centered_difference = np.roll(concentration,-1) - 2*concentration + np.roll(concentration, 1)
     concentration[1:-1] += diffusivity * time_step / grid_spacing**2 * centered_difference[1:-1]
 
-def diffusion_model():
+def diffusion_model(plot=False,domain_size=300, n_time_steps=5000):
     D = 100 # diffusivity
-    Lx = 300 # length of grid
+    Lx = domain_size
     dx = 0.5 # step size
     C_left = 500
     C_right = 0
-    nt = 5000
+    nt = n_time_steps
     
     x, nx = make_grid(0, Lx, dx)
     dt = calculate_time_step(dx,D)
     C = set_initial_profile(nx, C_left, C_right)
+
+    if plot is True:
+        plot_profile(x,C,color="b",title="Initial Concentration Profile")
     
-    plot_profile(x,C,color="b",title="Initial Concentration Profile")
-   
+    if plot is False:
+        print ("Time = 0\n", C) 
     for t in range(0, nt):
         solve_1d_diffusion(C, dx, dt, D)
+        if plot is False:
+            print(f"Time = {t*dt}\n", C)
     
-    plot_profile(x,C,title="Final Concentration Profile")
+    if plot is True:
+        plot_profile(x,C,title="Final Concentration Profile")
+
+
+if __name__ == "__main__":
+    print("Diffusion model")
+    diffusion_model(plot=False, domain_size=5, n_time_steps=5)
